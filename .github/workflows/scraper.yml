@@ -22,7 +22,7 @@ jobs:
         run: pip install yfinance pandas requests beautifulSoup4
 
       - name: 📰 執行 `TW.py`
-        run: python TW.py
+        run: python data_process/TW.py
 
       - name: 🔄 檢查是否有變更
         run: |
