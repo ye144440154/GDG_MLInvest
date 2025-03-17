@@ -12,7 +12,7 @@ from datetime import datetime
 warnings.filterwarnings("ignore")
 
 def log(message):
-    log_path="TW_log.txt"
+    log_path="data_process/TW_log.txt"
     with open(log_path, "a", encoding="utf-8") as file:
         file.write(message)
 
@@ -149,17 +149,17 @@ def get_annual_financial(sheet_type,co_id, industry, year, base_dir):
 
 def fetch_fundamental_data():
     # 讀取 JSON 檔案
-    json_path = "TW_stock.json"
+    json_path = "data_process/TW_stock.json"
     with open(json_path, "r", encoding="utf-8") as f:
         tw_stock = json.load(f)
 
     #讀取log檔
-    log_path="TW_log.txt"
+    log_path="data_process/TW_log.txt"
     with open(log_path, "w", encoding="utf-8") as file:
         file.write(f"TW.py 於 {datetime.now().strftime("%Y-%m-%d %H:%M:%S")} 啟動")
 
     # 檔案儲存根目錄
-    base_dir = "./TW"
+    base_dir = "data_process/TW"
 
     # 確保目錄存在
     if not os.path.exists(base_dir):
