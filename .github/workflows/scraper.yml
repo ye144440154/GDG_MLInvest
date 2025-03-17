@@ -1,0 +1,33 @@
+name: Fetch Fundamental Data
+
+on:
+  schedule:
+    - cron: "0 12 1 1 *"  # 每天 UTC 12:00 自動執行
+  workflow_dispatch:  # 允許手動觸發
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: ✅ 檢出 Repository
+        uses: actions/checkout@v4
+
+      - name: 🛠️ 設定 Python 環境
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+
+      - name: 📦 安裝 `feedparser`
+        run: pip install yfinance pandas requests beautifulSoup4 json
+
+      - name: 📰 執行 `TW.py`
+        run: python TW.py
+
+      - name: 🔄 檢查是否有變更
+        run: |
+          git config --global user.name "ye144440154"
+          git config --global user.email "andy144440154@gmail.com"
+          git add headlines.txt
+          git commit -m "🔄 更新 基本面資料" || echo "⚠️ 沒有新變更，跳過提交"
+          git push || echo "⚠️ 沒有新變更，跳過推送"
