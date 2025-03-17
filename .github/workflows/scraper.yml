@@ -18,8 +18,8 @@ jobs:
         with:
           python-version: "3.x"
 
-      - name: 📦 安裝 `feedparser`
-        run: pip install yfinance pandas requests beautifulSoup4 json
+      - name: 📦 安裝模組
+        run: pip install yfinance pandas requests beautifulSoup4
 
       - name: 📰 執行 `TW.py`
         run: python TW.py
