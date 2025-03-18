@@ -112,9 +112,9 @@ def get_financial_statement(sheet_type,co_id, year, season):
                 if(table.shape[0] >10): # 因為tables裡面有其他東西ex.說明文字 故只取長度比較長的目標資料
 
                     #table.to_csv("Test.csv", index=False, encoding="utf-8-sig")
-                    print(f"TW_{co_id}_{year}_{season}_{sheet_type}  爬蟲完成,休眠3秒")
-                    log(f"TW_{co_id}_{year}_{season}_{sheet_type}  爬蟲完成,休眠3秒")
-                    time.sleep(3)
+                    print(f"TW_{co_id}_{year}_{season}_{sheet_type}  爬蟲完成,休眠2秒")
+                    log(f"TW_{co_id}_{year}_{season}_{sheet_type}  爬蟲完成,休眠2秒")
+                    time.sleep(2)
                     return table
                 
             
@@ -166,8 +166,8 @@ def fetch_fundamental_data():
         os.makedirs(base_dir)
 
 
-    end_year = 114
-    year_range = 10
+    end_year = 112
+    year_range = 1
 
 
     for company_code, info in tw_stock.items():
