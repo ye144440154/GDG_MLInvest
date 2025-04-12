@@ -14,7 +14,7 @@ warnings.filterwarnings("ignore")
 def log(message):
     log_path="data_process/TW_log.txt"
     with open(log_path, "a", encoding="utf-8") as file:
-        file.write(message)
+        file.write(f"{message}\n")
 
 def data_clean(data,df,sheet_type,season):
 
@@ -78,8 +78,25 @@ def get_financial_statement(sheet_type,co_id, year, season):
 
             url = f"https://mopsov.twse.com.tw/mops/web/t164sb0{sheet_code}?encodeURIComponent=1&step=1&firstin=1&off=1&keyword4=&code1=&TYPEK2=&checkbtn=&queryName=co_id&inpuType=co_id&TYPEK=all&isnew=false&co_id={co_id}&year={year}&season=0{season}"
             headers = {"User-Agent": "Mozilla/5.0"}
-            # 取得網頁內容
-            response = requests.get(url, headers=headers)
+            timeout = 5
+            try_out = 5
+            for _ in range(try_out):
+                try:
+                    response = requests.get(url, headers=headers, timeout=timeout)
+                    response.raise_for_status()  # 確保請求成功，否則拋出異常
+                    break
+                except requests.exceptions.Timeout:
+                    print("請求超時，重新嘗試...")
+                    time.sleep(1)  # 等待1秒再試
+                except requests.exceptions.RequestException as e:
+                    print(f"發生錯誤: {e}")
+            
+            if not(response):
+                print(f"爬蟲多次失敗 跳過TW_{co_id}_{year}_{season}_{sheet_type}")
+                log(f"爬蟲多次失敗 跳過TW_{co_id}_{year}_{season}_{sheet_type}")
+                return pd.DataFrame()
+
+
             response.encoding = 'utf8'  # 根據網頁編碼設定，若非 Big5 可調整
             html_content = response.text
 
@@ -112,9 +129,9 @@ def get_financial_statement(sheet_type,co_id, year, season):
                 if(table.shape[0] >10): # 因為tables裡面有其他東西ex.說明文字 故只取長度比較長的目標資料
 
                     #table.to_csv("Test.csv", index=False, encoding="utf-8-sig")
-                    print(f"TW_{co_id}_{year}_{season}_{sheet_type}  爬蟲完成,休眠2秒")
-                    log(f"TW_{co_id}_{year}_{season}_{sheet_type}  爬蟲完成,休眠2秒")
-                    time.sleep(2)
+                    print(f"TW_{co_id}_{year}_{season}_{sheet_type}  爬蟲完成,休眠1秒")
+                    log(f"TW_{co_id}_{year}_{season}_{sheet_type}  爬蟲完成,休眠1秒")
+                    time.sleep(1)
                     return table
                 
             
@@ -124,9 +141,7 @@ def get_financial_statement(sheet_type,co_id, year, season):
         
         
         except :
-            log("伺服器拒絕回應")
-            log("睡個5秒")
-            log("ZZzzzz...")
+            log("伺服器拒絕回應 睡個5秒 ZZzzzz...")
             time.sleep(5)
             log("重新嘗試")
             continue
@@ -156,7 +171,7 @@ def fetch_fundamental_data():
     #讀取log檔
     log_path="data_process/TW_log.txt"
     with open(log_path, "w", encoding="utf-8") as file:
-        file.write(f"TW.py 於 {datetime.now().strftime("%Y-%m-%d %H:%M:%S")} 啟動")
+        file.write(f"TW.py 於 {datetime.now().strftime("%Y-%m-%d %H:%M:%S")} 啟動\n")
 
     # 檔案儲存根目錄
     base_dir = "data_process/TW"
